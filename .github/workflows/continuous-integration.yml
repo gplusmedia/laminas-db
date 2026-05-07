@@ -25,7 +25,11 @@ jobs:
     runs-on: ${{ matrix.operatingSystem }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+      matrix:
+        include: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+        mssql_version:
+          - 2022-latest
+          - 2025-latest
     steps:
       - name: ${{ matrix.name }}
         uses: laminas/laminas-continuous-integration-action@v1
@@ -60,7 +64,7 @@ jobs:
         ports:
           - 5432
       mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
+        image: mcr.microsoft.com/mssql/server:${{ matrix.mssql_version }}
         env:
           ACCEPT_EULA: 'Y'
           SA_PASSWORD: 'Password123'
